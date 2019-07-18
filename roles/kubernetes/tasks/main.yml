@@ -1,0 +1,113 @@
+- name: disabled selinux
+  selinux: state=disabled
+
+- name: swap off
+  replace: path=/etc/fstab regexp=^.*-swap.*$
+
+- name: copy kubernetes package(kubelet kubeadm kubectl)
+  copy: src={{ item }} dest=/root/
+  with_fileglob: "kube*.tar.gz"
+
+- name: unarchive kubectl.tar.gz
+  unarchive: src=/root/kubectl.tar.gz dest=/root/ remote_src=yes
+
+- name: install kubectl
+  yum: 
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "/root/kubectl/8425067aee8e57b64d3eff0d78817c30e486d58a6b749fa55a46366bb9addb7e-kubectl-1.14.3-0.x86_64.rpm"
+
+
+- name: unarchive kubelet.tar.gz
+  unarchive: src=/root/kubelet.tar.gz dest=/root/ remote_src=yes
+
+- name: install kubelet
+  yum: 
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "/root/kubelet/548a0dcd865c16a50980420ddfa5fbccb8b59621179798e6dc905c9bf8af3b34-kubernetes-cni-0.7.5-0.x86_64.rpm"
+      - "/root/kubelet/77f40346fedfa1917524bd3bcf9f7cdfb0ec234b965609b451d3c8ea7ffc6a92-kubelet-1.14.3-0.x86_64.rpm"
+      - "/root/kubelet/conntrack-tools-1.4.4-4.el7.x86_64.rpm"
+      - "/root/kubelet/libnetfilter_cthelper-1.0.0-9.el7.x86_64.rpm"
+      - "/root/kubelet/libnetfilter_cttimeout-1.0.0-6.el7.x86_64.rpm"
+      - "/root/kubelet/libnetfilter_queue-1.0.2-2.el7_2.x86_64.rpm"
+      - "/root/kubelet/socat-1.7.3.2-2.el7.x86_64.rpm"
+
+- name: unarchive kubeadm.tar.gz
+  unarchive: src=/root/kubeadm.tar.gz dest=/root/ remote_src=yes
+
+- name: install kubeadm
+  yum: 
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "/root/kubeadm/0ac0a679e4fe90bc49165841f8cdd7527940b05a5bef641ded55fd828c21ec0d-kubeadm-1.14.3-0.x86_64.rpm"
+      - "/root/kubeadm/53edc739a0e51a4c17794de26b13ee5df939bd3161b37f503fe2af8980b41a89-cri-tools-1.12.0-0.x86_64.rpm"
+      - "/root/kubeadm/548a0dcd865c16a50980420ddfa5fbccb8b59621179798e6dc905c9bf8af3b34-kubernetes-cni-0.7.5-0.x86_64.rpm"
+      - "/root/kubeadm/77f40346fedfa1917524bd3bcf9f7cdfb0ec234b965609b451d3c8ea7ffc6a92-kubelet-1.14.3-0.x86_64.rpm"
+      - "/root/kubeadm/8425067aee8e57b64d3eff0d78817c30e486d58a6b749fa55a46366bb9addb7e-kubectl-1.14.3-0.x86_64.rpm"
+      - "/root/kubeadm/conntrack-tools-1.4.4-4.el7.x86_64.rpm"
+      - "/root/kubeadm/libnetfilter_cthelper-1.0.0-9.el7.x86_64.rpm"
+      - "/root/kubeadm/libnetfilter_cttimeout-1.0.0-6.el7.x86_64.rpm"
+      - "/root/kubeadm/libnetfilter_queue-1.0.2-2.el7_2.x86_64.rpm"
+      - "/root/kubeadm/socat-1.7.3.2-2.el7.x86_64.rpm"
+
+- name: copy docker-ce package
+  copy: src=docker-ce.tar.gz dest=/root/
+  
+- name: uncarchive docker-ce
+  unarchive: src=/root/docker-ce.tar.gz dest=/root/ remote_src=yes
+
+- name: install docker-ce
+  yum: 
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "/root/docker-ce/audit-2.8.4-4.el7.x86_64.rpm"
+      - "/root/docker-ce/audit-libs-2.8.4-4.el7.x86_64.rpm"
+      - "/root/docker-ce/audit-libs-python-2.8.4-4.el7.x86_64.rpm"
+      - "/root/docker-ce/checkpolicy-2.5-8.el7.x86_64.rpm"
+      - "/root/docker-ce/container-selinux-2.95-2.el7_6.noarch.rpm"
+      - "/root/docker-ce/containerd.io-1.2.5-3.1.el7.x86_64.rpm"
+      - "/root/docker-ce/docker-ce-18.09.6-3.el7.x86_64.rpm"
+      - "/root/docker-ce/docker-ce-cli-18.09.6-3.el7.x86_64.rpm"
+      - "/root/docker-ce/libcgroup-0.41-20.el7.x86_64.rpm"
+      - "/root/docker-ce/libselinux-2.5-14.1.el7.x86_64.rpm"
+      - "/root/docker-ce/libselinux-python-2.5-14.1.el7.x86_64.rpm"
+      - "/root/docker-ce/libselinux-utils-2.5-14.1.el7.x86_64.rpm"
+      - "/root/docker-ce/libsemanage-2.5-14.el7.x86_64.rpm"
+      - "/root/docker-ce/libsemanage-python-2.5-14.el7.x86_64.rpm"
+      - "/root/docker-ce/libsepol-2.5-10.el7.x86_64.rpm"
+      - "/root/docker-ce/policycoreutils-2.5-29.el7_6.1.x86_64.rpm"
+      - "/root/docker-ce/policycoreutils-python-2.5-29.el7_6.1.x86_64.rpm"
+      - "/root/docker-ce/python-IPy-0.75-6.el7.noarch.rpm"
+      - "/root/docker-ce/selinux-policy-3.13.1-229.el7_6.12.noarch.rpm"
+      - "/root/docker-ce/selinux-policy-targeted-3.13.1-229.el7_6.12.noarch.rpm"
+      - "/root/docker-ce/setools-libs-3.3.8-4.el7.x86_64.rpm"
+
+- name: systemctl start docker
+  systemd: name=docker state=started enabled=yes
+
+- name: copy docker-daemon.json
+  copy: src=daemon.json dest=/etc/docker/
+
+- name: mkdir docker.service.d
+  file: path=/etc/systemd/system/docker.service.d state=directory
+
+- name: systemctl restart docker
+  systemd: name=docker state=restarted daemon_reload=yes
+
+- name: systemctl start kubelet
+  systemd: name=kubelet state=started enabled=yes
+
+- name: copy kubernetes kernel parameter file
+  copy: src=k8s.conf dest=/etc/sysctl.d/
+
+- name: systemctl stop firewalld
+  systemd: name=firewalld state=stopped enabled=no
